@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pixels in Motion — shader-driven slides</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%238b7bff' d='M12 2l2 8 8 2-8 2-2 8-2-8-8-2 8-2z'/></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<canvas id="gl" aria-hidden="true"></canvas>
+
+<main id="deck">
+
+  <!-- 01 · title -->
+  <section class="slide" data-scene="0" data-fx="pixel:0,dots:0,grid:0,ca:.35,grain:.3" data-tag="scene 00 · title">
+    <div class="stack">
+      <p class="kicker" data-rise style="--d:.1s">A field guide to shader-driven slides</p>
+      <h1 data-split>Pixels in Motion</h1>
+      <p class="sub" data-rise style="--d:.6s">GLSL paints the atmosphere. SVG delivers the meaning. <em>The deck is the demo.</em></p>
+    </div>
+    <p class="hint" data-rise style="--d:1.1s">← → navigate &nbsp;·&nbsp; 1–5 toggle effects &nbsp;·&nbsp; F fullscreen</p>
+  </section>
+
+  <!-- 02 · the premise -->
+  <section class="slide" data-scene="1" data-fx="pixel:0,dots:0,grid:0,ca:.15,grain:.25" data-tag="scene 01 · the premise">
+    <div class="stack">
+      <h2 data-split>One canvas, two languages</h2>
+      <div class="layers">
+        <div class="layer-box" data-rise style="--d:.35s">
+          <svg class="ic draw" viewBox="0 0 24 24" aria-hidden="true"><path pathLength="1" d="M5 7V5h14v2M12 5v14M8 19h8"/></svg>
+          <div>
+            <h3>SVG + CSS — the foreground</h3>
+            <p>Meaning: type, icons, diagrams. Vector-crisp at any zoom, inspectable, styleable.</p>
+          </div>
+        </div>
+        <div class="layer-box" data-rise style="--d:.5s">
+          <svg class="ic draw" viewBox="0 0 24 24" aria-hidden="true"><path pathLength="1" d="M2 12Q5 5 8 12T14 12T20 12"/></svg>
+          <div>
+            <h3>GLSL — the atmosphere</h3>
+            <p>One fragment shader per scene. Per-pixel light, motion and texture that CSS can't reach.</p>
+          </div>
+        </div>
+        <div class="layer-box" data-rise style="--d:.65s">
+          <svg class="ic draw" viewBox="0 0 24 24" aria-hidden="true"><path pathLength="1" d="M12 3l1.8 7.2L21 12l-7.2 1.8L12 21l-1.8-7.2L3 12l7.2-1.8z"/></svg>
+          <div>
+            <h3>Post FX — the finish</h3>
+            <p>Grain, aberration, halftone, grids, vignette — chained math on the same framebuffer.</p>
+          </div>
+        </div>
+      </div>
+      <p class="sub" data-rise style="--d:.95s">The DOM stays semantic. The GPU stays beautiful. <em>Neither layer knows the other exists.</em></p>
+    </div>
+  </section>
+
+  <!-- 03 · glsl -->
+  <section class="slide" data-scene="2" data-fx="pixel:0,dots:0,grid:0,ca:.2,grain:.25" data-tag="scene 02 · glsl">
+    <div class="stack center">
+      <p class="kicker mono" data-rise style="--d:.15s">color = f(uv, u_time)</p>
+      <h1 data-split>Every pixel is a function call</h1>
+      <p class="sub" data-rise style="--d:.65s">No textures. No video. No image assets. Eleven scenes, one fragment shader — a few hundred lines of math, resolved two million times per frame.</p>
+    </div>
+  </section>
+
+  <!-- 04 · fx lab -->
+  <section class="slide scrim" data-scene="3" data-fx="pixel:0,dots:0,grid:0,ca:.3,grain:.35" data-tag="scene 03 · the fx stack">
+    <div class="stack">
+      <h2 data-split>Compositing is cheap</h2>
+      <p class="sub" data-rise style="--d:.45s">Each effect is a few lines of math on the same framebuffer. Chain them in order: quantize → aberrate → halftone → grid → vignette → grain.</p>
+      <div class="chips" data-rise style="--d:.7s">
+        <button type="button" class="chip" data-fx="pixel"><kbd>1</kbd> Pixelate</button>
+        <button type="button" class="chip" data-fx="dots"><kbd>2</kbd> Halftone</button>
+        <button type="button" class="chip" data-fx="grid"><kbd>3</kbd> Grid</button>
+        <button type="button" class="chip" data-fx="ca"><kbd>4</kbd> Aberration</button>
+        <button type="button" class="chip" data-fx="grain"><kbd>5</kbd> Grain</button>
+      </div>
+      <p class="footnote mono" data-rise style="--d:.95s">click a chip or press its number — the shader re-renders live</p>
+    </div>
+  </section>
+
+  <!-- 05 · svg -->
+  <section class="slide" data-scene="4" data-fx="pixel:0,dots:0,grid:0,ca:.12,grain:.2" data-tag="scene 04 · svg">
+    <div class="stack">
+      <h2 data-split>Meaning, drawn</h2>
+      <div class="cards three">
+        <figure class="card" data-rise style="--d:.4s">
+          <svg class="demo draw" viewBox="0 0 120 120" aria-hidden="true">
+            <path pathLength="1" style="--i:0" d="M34 20H86A14 14 0 0 1 100 34V86A14 14 0 0 1 86 100H34A14 14 0 0 1 20 86V34A14 14 0 0 1 34 20Z"/>
+            <path pathLength="1" style="--i:1" d="M44 60H74M62 46l14 14-14 14"/>
+          </svg>
+          <figcaption><strong>Draw-on</strong><span><code>stroke-dasharray</code> + <code>pathLength="1"</code> — every path shares one 1-unit clock.</span></figcaption>
+        </figure>
+        <figure class="card" data-rise style="--d:.55s">
+          <svg class="demo" viewBox="0 0 120 120" aria-hidden="true">
+            <path fill="rgba(139,123,255,.16)" stroke="#8b7bff" stroke-width="2.5"
+              d="M60 16C86 12 106 34 102 58C98 84 84 104 58 102C34 100 16 82 18 58C20 32 36 20 60 16Z">
+              <animate attributeName="d" dur="9s" repeatCount="indefinite" calcMode="spline"
+                keyTimes="0;.33;.66;1" keySplines=".4 0 .2 1;.4 0 .2 1;.4 0 .2 1"
+                values="M60 16C86 12 106 34 102 58C98 84 84 104 58 102C34 100 16 82 18 58C20 32 36 20 60 16Z;
+                        M62 20C92 24 108 48 98 70C88 94 60 106 40 94C20 82 12 60 22 42C32 24 44 18 62 20Z;
+                        M56 14C82 10 104 30 100 56C96 84 76 106 52 100C30 94 14 78 20 54C26 30 34 18 56 14Z;
+                        M60 16C86 12 106 34 102 58C98 84 84 104 58 102C34 100 16 82 18 58C20 32 36 20 60 16Z"/>
+            </path>
+          </svg>
+          <figcaption><strong>Morph</strong><span>SMIL interpolates paths with identical structure. No library, no JS.</span></figcaption>
+        </figure>
+        <figure class="card" data-rise style="--d:.7s">
+          <svg class="demo" viewBox="0 0 120 120" aria-hidden="true">
+            <path d="M28 88H92" stroke="rgba(238,240,250,.25)" stroke-width="1.5" fill="none"/>
+            <rect class="bar" x="36" y="44" width="11" height="44" rx="3" style="--i:0" fill="#5eead4"/>
+            <rect class="bar" x="55" y="28" width="11" height="60" rx="3" style="--i:1" fill="#8b7bff"/>
+            <rect class="bar" x="74" y="52" width="11" height="36" rx="3" style="--i:2" fill="#5eead4"/>
+          </svg>
+          <figcaption><strong>Stagger</strong><span>Each element runs its own clock — delay = index × beat.</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 · choosing tech -->
+  <section class="slide" data-scene="5" data-fx="pixel:0,dots:0,grid:0,ca:.18,grain:.3" data-tag="scene 05 · choosing tech">
+    <div class="stack">
+      <h2 data-split>Choose boring, native, removable</h2>
+      <div class="table">
+        <div class="row" data-rise style="--d:.4s"><span class="need">Per-pixel motion, light, texture</span><span class="get">GLSL — WebGL2 ships in every browser</span></div>
+        <div class="row" data-rise style="--d:.52s"><span class="need">Type, icons, diagrams</span><span class="get">SVG + CSS — resolution-free, inspectable</span></div>
+        <div class="row" data-rise style="--d:.64s"><span class="need">Layout, focus, navigation</span><span class="get">HTML — a slide deck is already a document</span></div>
+        <div class="row" data-rise style="--d:.76s"><span class="need">Meshes, cameras, physics</span><span class="get">three.js — only when meshes are the point</span></div>
+        <div class="row" data-rise style="--d:.88s"><span class="need">Deck chrome: keys, progress</span><span class="get">~120 lines of vanilla JS</span></div>
+      </div>
+      <p class="verdict" data-rise style="--d:1.1s">Every dependency must earn its keep — the same test an abstraction has to pass.</p>
+    </div>
+  </section>
+
+  <!-- 07 · house style -->
+  <section class="slide" data-scene="6" data-fx="pixel:0,dots:0,grid:0,ca:.2,grain:.3" data-tag="scene 06 · house style">
+    <div class="stack">
+      <h2 data-split>House style: code as prose</h2>
+      <div class="cards four">
+        <div class="card" data-rise style="--d:.4s">
+          <h3>A pleasure to read</h3>
+          <p>Order code by invocation. A reader should follow the whole flow top-down, no jumping.</p>
+        </div>
+        <div class="card" data-rise style="--d:.53s">
+          <h3>Abstractions earn their keep</h3>
+          <p>No third variation, no helper. Inline until the code itself asks for a seam.</p>
+        </div>
+        <div class="card" data-rise style="--d:.66s">
+          <h3>Explicit over clever</h3>
+          <p>An if-chain of eleven scenes beats a reflective registry. Expanded conditionals over guard clauses.</p>
+        </div>
+        <div class="card" data-rise style="--d:.79s">
+          <h3>Compute at write time</h3>
+          <p>Bake shader strings. Measure paths once. Never rebuild per frame what you can build at load.</p>
+        </div>
+      </div>
+      <p class="footnote mono" data-rise style="--d:1.05s">github.com/basecamp/house-style · STYLE.md in basecamp/fizzy</p>
+    </div>
+  </section>
+
+  <!-- 08 · applied -->
+  <section class="slide" data-scene="7" data-fx="pixel:0,dots:0,grid:.5,ca:.12,grain:.2" data-tag="scene 07 · applied">
+    <div class="stack">
+      <h2 data-split>This deck follows its own rules</h2>
+      <div class="split2">
+        <ul class="files" data-rise style="--d:.4s">
+          <li><b>index.html</b><span>eleven slides · inline SVG</span></li>
+          <li><b>style.css</b><span>layout · five keyframe families</span></li>
+          <li><b>gl.js</b><span>one program · eleven scenes · five effects</span></li>
+          <li><b>slides.js</b><span>keys · wheel · touch · activation</span></li>
+        </ul>
+        <pre class="code" data-rise style="--d:.6s"><code><span class="c">// gl.js — the whole pipeline, per frame</span>
+<span class="k">function</span> <span class="f">frame</span>(now) {
+  <span class="f">driftEffects</span>(dt);     <span class="c">// ease the five fx targets</span>
+  <span class="f">tickTransition</span>(now);  <span class="c">// smoothstep the dissolve</span>
+  gl.<span class="f">uniform1f</span>(U.time, time);
+  gl.<span class="f">drawArrays</span>(gl.TRIANGLES, 0, 3);
+  <span class="f">requestAnimationFrame</span>(frame);
+}</code></pre>
+      </div>
+      <p class="verdict" data-rise style="--d:.9s">No build step · No dependencies · The DOM is the source of truth</p>
+    </div>
+  </section>
+
+  <!-- 09 · findings -->
+  <section class="slide" data-scene="8" data-fx="pixel:0,dots:0,grid:0,ca:.2,grain:.35" data-tag="scene 08 · findings">
+    <div class="stack">
+      <h2 data-split>What actually reads as beautiful</h2>
+      <div class="table">
+        <div class="row" data-rise style="--d:.4s"><span class="need">One hero effect per slide</span><span class="get">Two effects compete; one effect convinces</span></div>
+        <div class="row" data-rise style="--d:.52s"><span class="need">Motion in beats</span><span class="get">30–40&nbsp;ms stagger, 400–700&nbsp;ms reveals</span></div>
+        <div class="row" data-rise style="--d:.64s"><span class="need">Quiet background, loud type</span><span class="get">Contrast is the whole trick — keep it</span></div>
+        <div class="row" data-rise style="--d:.76s"><span class="need">One palette, one easing family</span><span class="get">Consistency reads as intention</span></div>
+      </div>
+      <p class="verdict" data-rise style="--d:1s">Beauty here is not decoration — it's restraint with one loud idea per slide.</p>
+    </div>
+  </section>
+
+  <!-- 10 · the loop -->
+  <section class="slide" data-scene="10" data-fx="pixel:0,dots:0,grid:0,ca:.15,grain:.3" data-tag="scene 09 · the loop">
+    <div class="stack">
+      <h2 data-split>The loop</h2>
+      <ol class="steps">
+        <li data-rise style="--d:.4s">
+          <span class="stepnum mono">01</span>
+          <svg class="ic draw" viewBox="0 0 24 24" aria-hidden="true"><path pathLength="1" d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5L17 3z"/></svg>
+          <h3>Sketch</h3><p>One idea per slide, decided on paper first.</p>
+        </li>
+        <li data-rise style="--d:.53s">
+          <span class="stepnum mono">02</span>
+          <svg class="ic draw" viewBox="0 0 24 24" aria-hidden="true"><path pathLength="1" d="M2 12Q5 5 8 12T14 12T20 12"/></svg>
+          <h3>Shader</h3><p>One small scene per slide — tintable, ~15 lines.</p>
+        </li>
+        <li data-rise style="--d:.66s">
+          <span class="stepnum mono">03</span>
+          <svg class="ic draw" viewBox="0 0 24 24" aria-hidden="true"><path pathLength="1" d="M12 3l1.8 7.2L21 12l-7.2 1.8L12 21l-1.8-7.2L3 12l7.2-1.8z"/></svg>
+          <h3>Composite</h3><p>Grain and aberration by default; the rest on purpose.</p>
+        </li>
+        <li data-rise style="--d:.79s">
+          <span class="stepnum mono">04</span>
+          <svg class="ic draw" viewBox="0 0 24 24" aria-hidden="true"><path pathLength="1" d="M5 7V5h14v2M12 5v14M8 19h8"/></svg>
+          <h3>Type</h3><p>Stagger reveals, draw icons on. Body text never dances.</p>
+        </li>
+        <li data-rise style="--d:.92s">
+          <span class="stepnum mono">05</span>
+          <svg class="ic draw" viewBox="0 0 24 24" aria-hidden="true"><circle pathLength="1" cx="6" cy="6" r="2.6"/><circle pathLength="1" style="--i:1" cx="6" cy="18" r="2.6"/><path pathLength="1" style="--i:2" d="M20 4L8.1 15.9M14.7 14.7L20 20M8.1 8.1L12 12"/></svg>
+          <h3>Cut</h3><p>If an effect needs a caption, the effect is the slide.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 11 · finale -->
+  <section class="slide scrim" data-scene="9" data-fx="pixel:0,dots:0,grid:0,ca:.3,grain:.4" data-tag="scene 10 · finale">
+    <div class="stack center">
+      <svg class="bigblob" viewBox="0 0 120 120" aria-hidden="true">
+        <g opacity=".5">
+          <path d="M60 8A52 52 0 1 1 59.9 8" fill="none" stroke="rgba(238,240,250,.4)" stroke-width="1" stroke-dasharray="3 5"/>
+          <circle cx="60" cy="8" r="2.2" fill="#8b7bff"/>
+          <animateTransform attributeName="transform" type="rotate" from="0 60 60" to="360 60 60" dur="36s" repeatCount="indefinite"/>
+        </g>
+        <path fill="rgba(139,123,255,.18)" stroke="#8b7bff" stroke-width="2"
+          d="M60 16C86 12 106 34 102 58C98 84 84 104 58 102C34 100 16 82 18 58C20 32 36 20 60 16Z">
+          <animate attributeName="d" dur="8s" repeatCount="indefinite" calcMode="spline"
+            keyTimes="0;.33;.66;1" keySplines=".4 0 .2 1;.4 0 .2 1;.4 0 .2 1"
+            values="M60 16C86 12 106 34 102 58C98 84 84 104 58 102C34 100 16 82 18 58C20 32 36 20 60 16Z;
+                    M62 20C92 24 108 48 98 70C88 94 60 106 40 94C20 82 12 60 22 42C32 24 44 18 62 20Z;
+                    M56 14C82 10 104 30 100 56C96 84 76 106 52 100C30 94 14 78 20 54C26 30 34 18 56 14Z;
+                    M60 16C86 12 106 34 102 58C98 84 84 104 58 102C34 100 16 82 18 58C20 32 36 20 60 16Z"/>
+        </path>
+      </svg>
+      <h1 data-split>Slides are software</h1>
+      <p class="sub" data-rise style="--d:.6s">Design the deck like the product: native tech, explicit code, one idea per pixel.</p>
+      <p class="credits mono" data-rise style="--d:1s">WebGL2 · SVG · CSS — zero dependencies, zero build &nbsp;·&nbsp; principles: basecamp/house-style</p>
+    </div>
+  </section>
+
+</main>
+
+<div class="chrome">
+  <div class="progress"><i id="bar"></i></div>
+  <div class="tag" id="tag"></div>
+  <div class="counter" id="counter">01 / 11</div>
+</div>
+
+<noscript><style>.slide { opacity: 1 !important; visibility: visible !important; position: static; min-height: 100vh; }</style></noscript>
+
+<script src="gl.js"></script>
+<script src="slides.js"></script>
+</body>
+</html>

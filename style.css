@@ -1,0 +1,425 @@
+/* style.css — the DOM half's look: layout, panels, and five keyframe families. */
+
+:root {
+  --bg: #05060c;
+  --ink: #eef0fa;
+  --dim: rgba(238, 240, 250, 0.6);
+  --line: rgba(238, 240, 250, 0.14);
+  --panel: rgba(8, 10, 20, 0.5);
+  --accent: #8b7bff;
+  --accent2: #5eead4;
+  --sans: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: var(--accent); color: #0a0a20; }
+
+/* -- canvas & fallback -------------------------------------------------- */
+
+#gl { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; }
+
+body.no-gl #gl { display: none; }
+body.no-gl {
+  background: radial-gradient(120% 90% at 30% 20%, #12162b 0%, #05060c 70%);
+}
+
+/* -- slides ---------------------------------------------------------------- */
+
+.slide {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(2rem, 8vw, 6.5rem);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.55s ease, visibility 0s linear 0.55s;
+}
+
+.slide.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 0.55s ease 0.15s;
+}
+
+.scrim::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(90% 80% at 35% 55%, rgba(5, 6, 12, 0.72), transparent 70%);
+  pointer-events: none;
+}
+
+.stack { max-width: 56rem; position: relative; }
+.stack.center { margin-inline: auto; text-align: center; }
+
+h1 {
+  font-size: clamp(2.7rem, 6.5vw, 5.4rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+h2 {
+  font-size: clamp(2.1rem, 4.6vw, 3.5rem);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+}
+
+h3 { font-size: 1.02rem; font-weight: 700; }
+
+.kicker {
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-size: clamp(0.72rem, 1.1vw, 0.85rem);
+  color: var(--accent2);
+  margin-bottom: 1.4rem;
+}
+
+.mono { font-family: var(--mono); }
+
+.sub {
+  margin-top: 1.4rem;
+  color: var(--dim);
+  font-size: clamp(1.02rem, 1.55vw, 1.25rem);
+  line-height: 1.65;
+  max-width: 42rem;
+}
+.center .sub { margin-inline: auto; }
+
+em { font-style: normal; color: var(--accent2); }
+
+.footnote {
+  margin-top: 1.6rem;
+  color: var(--dim);
+  font-size: 0.78rem;
+  letter-spacing: 0.07em;
+}
+
+.hint {
+  position: absolute;
+  bottom: 2.2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  color: var(--dim);
+}
+
+.credits {
+  margin-top: 2.2rem;
+  font-size: 0.74rem;
+  letter-spacing: 0.09em;
+  color: var(--dim);
+}
+
+/* -- entrance animations ---------------------------------------------------
+   Four families: char rise, block appear, stroke draw, bar grow.
+   Elements reset (animation: none) when their slide deactivates,
+   so every entrance replays on revisit. */
+
+.char { display: inline-block; opacity: 0; }
+.slide.active .char {
+  animation: rise 0.75s cubic-bezier(0.16, 0.84, 0.28, 1) both;
+  animation-delay: calc(0.12s + var(--i) * 0.032s);
+}
+.slide:not(.active) .char { animation: none; }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(0.55em) rotate(2deg); filter: blur(9px); }
+  to   { opacity: 1; transform: none; filter: blur(0); }
+}
+
+[data-rise] { opacity: 0; }
+.slide.active [data-rise] {
+  animation: appear 0.8s cubic-bezier(0.16, 0.84, 0.28, 1) both;
+  animation-delay: var(--d, 0.3s);
+}
+.slide:not(.active) [data-rise] { animation: none; }
+
+@keyframes appear {
+  from { opacity: 0; transform: translateY(1.1rem); }
+  to   { opacity: 1; transform: none; }
+}
+
+.draw {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.draw path, .draw circle, .draw rect, .draw polyline {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.slide.active .draw path,
+.slide.active .draw circle,
+.slide.active .draw rect,
+.slide.active .draw polyline {
+  animation: draw 1.2s cubic-bezier(0.5, 0, 0.2, 1) forwards;
+  animation-delay: calc(var(--d, 0.35s) + var(--i, 0) * 0.35s);
+}
+.slide:not(.active) .draw path,
+.slide:not(.active) .draw circle,
+.slide:not(.active) .draw rect,
+.slide:not(.active) .draw polyline { animation: none; }
+
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+.bar {
+  transform-box: fill-box;
+  transform-origin: bottom;
+  opacity: 0;
+}
+.slide.active .bar {
+  animation: barup 0.9s cubic-bezier(0.2, 0.9, 0.25, 1) both;
+  animation-delay: calc(0.5s + var(--i) * 0.14s);
+}
+.slide:not(.active) .bar { animation: none; }
+
+@keyframes barup {
+  from { transform: scaleY(0.05); opacity: 1; }
+  to   { transform: scaleY(1); opacity: 1; }
+}
+
+/* -- premise: layer boxes ---------------------------------------------------- */
+
+.layers {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 2rem;
+  max-width: 34rem;
+}
+
+.layer-box {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+}
+
+.layer-box .ic { width: 30px; height: 30px; flex: none; color: var(--accent2); }
+.layer-box .draw { stroke-width: 1.8; }
+.layer-box p { color: var(--dim); font-size: 0.92rem; line-height: 1.5; margin-top: 0.2rem; }
+
+/* -- cards --------------------------------------------------------------------- */
+
+.cards { display: grid; gap: 1rem; margin-top: 2rem; }
+.cards.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.cards.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 1.3rem 1.4rem;
+}
+.card h3 { margin-bottom: 0.45rem; }
+.card p { color: var(--dim); font-size: 0.92rem; line-height: 1.55; }
+
+figure.card { display: flex; flex-direction: column; }
+figure.card .demo { width: 104px; height: 104px; margin-bottom: 1rem; color: var(--accent); }
+figure.card figcaption { margin-top: auto; }
+figure.card figcaption strong { display: block; margin-bottom: 0.3rem; }
+figure.card figcaption span { color: var(--dim); font-size: 0.84rem; line-height: 1.5; }
+figure.card code { font-family: var(--mono); font-size: 0.78em; color: var(--accent2); }
+
+/* -- tables ----------------------------------------------------------------------- */
+
+.table { margin-top: 1.8rem; border-top: 1px solid var(--line); max-width: 42rem; }
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 1.5rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--line);
+  font-size: clamp(0.95rem, 1.35vw, 1.08rem);
+}
+.row .need { color: var(--dim); }
+.row .get::before { content: "→ "; color: var(--accent2); }
+
+.verdict {
+  margin-top: 1.6rem;
+  padding-left: 1rem;
+  border-left: 3px solid var(--accent);
+  font-size: 1.02rem;
+  line-height: 1.55;
+  max-width: 38rem;
+}
+
+/* -- applied: files + code ---------------------------------------------------------- */
+
+.split2 {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 2rem;
+  margin-top: 1.8rem;
+  align-items: start;
+  max-width: 52rem;
+}
+
+.files { list-style: none; font-family: var(--mono); font-size: 0.9rem; }
+.files li {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr;
+  gap: 1rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.files b { font-weight: 500; color: var(--accent2); }
+.files span { color: var(--dim); }
+
+.code {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1.2rem 1.4rem;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  line-height: 1.7;
+  overflow-x: auto;
+}
+.code .c { color: var(--dim); }
+.code .k { color: var(--accent); }
+.code .f { color: var(--accent2); }
+
+/* -- the loop: steps -------------------------------------------------------------------- */
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+  list-style: none;
+}
+.steps li {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1.1rem 1.1rem 1.2rem;
+}
+.steps .ic { width: 26px; height: 26px; color: var(--accent2); margin-bottom: 0.8rem; }
+.steps .draw { stroke-width: 1.8; }
+.stepnum {
+  display: block;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  color: var(--dim);
+  margin-bottom: 0.5rem;
+}
+.steps p { color: var(--dim); font-size: 0.82rem; line-height: 1.5; margin-top: 0.3rem; }
+
+/* -- finale blob -------------------------------------------------------------------------- */
+
+.bigblob { width: 118px; height: 120px; margin-bottom: 1.4rem; }
+
+/* -- chips ---------------------------------------------------------------------------------- */
+
+.chips { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 2rem; }
+
+.chip {
+  font: inherit;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.65rem 1.15rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.chip:hover { border-color: var(--accent); transform: translateY(-1px); }
+.chip kbd {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  opacity: 0.55;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 0.1rem 0.4rem;
+}
+.chip.on { background: var(--accent); border-color: var(--accent); color: #0a0a20; }
+.chip.on kbd { border-color: rgba(10, 10, 30, 0.35); opacity: 0.75; }
+
+/* -- chrome ------------------------------------------------------------------------------------ */
+
+.chrome { font-family: var(--mono); }
+
+.progress {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  height: 3px;
+  background: rgba(238, 240, 250, 0.08);
+  z-index: 3;
+}
+.progress i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.tag {
+  position: fixed;
+  top: 1.6rem; left: 2rem;
+  z-index: 3;
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.counter {
+  position: fixed;
+  bottom: 1.4rem; right: 2rem;
+  z-index: 3;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: var(--dim);
+}
+
+/* -- responsive & motion ---------------------------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .cards.three, .cards.four { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr 1fr; }
+  .split2 { grid-template-columns: 1fr; }
+  .row { grid-template-columns: 1fr; gap: 0.15rem; }
+  .tag { left: 1.2rem; }
+  .counter { right: 1.2rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .char, [data-rise], .bar,
+  .draw path, .draw circle, .draw rect, .draw polyline {
+    animation-duration: 0.01s !important;
+    animation-delay: 0s !important;
+  }
+}
